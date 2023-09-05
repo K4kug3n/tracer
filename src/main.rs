@@ -6,7 +6,21 @@ use crate::color::Color;
 use crate::vec3::{Vec3, Point3};
 use crate::ray::Ray;
 
+fn hit_sphere(center: &Point3, radius: f64, ray: &Ray) -> bool {
+    let oc = ray.origin() - *center;
+
+    let a = ray.direction().dot(ray.direction());
+    let b = 2. * (oc.dot(ray.direction()));
+    let c = oc.dot(oc) - radius * radius;
+
+    return (b * b - 4. * a * c) >= 0.
+}
+
 fn ray_color(ray: &Ray) -> Color {
+    if hit_sphere(&Point3::new(0., 0., -1.), 0.5, ray) {
+        return Color::new(1., 0., 0.);
+    }
+
     let unit_direction = ray.direction().unit();
     let a = 0.5 * (unit_direction.y() + 1.);
 
