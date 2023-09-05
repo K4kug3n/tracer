@@ -5,6 +5,8 @@ pub struct Vec3 {
 	values : [f64; 3]
 }
 
+pub type Point3 = Vec3;
+
 impl Vec3 {
 	pub fn new(v1: f64, v2: f64, v3: f64) -> Vec3 {
 		Vec3 {
