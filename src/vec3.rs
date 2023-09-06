@@ -1,4 +1,4 @@
-use std::ops::{Add, AddAssign, Sub, SubAssign, Mul, Div};
+use std::ops::{Add, AddAssign, Sub, SubAssign, Mul, Div, Neg};
 
 #[derive(Clone, Copy, Debug)]
 pub struct Vec3 {
@@ -103,6 +103,14 @@ impl Div<f64> for Vec3 {
 	}
 }
 
+impl Neg for Vec3 {
+	type Output = Vec3;
+
+	fn neg(self) -> Self::Output {
+		Vec3::new(-self.x(), -self.y(), -self.z())	
+	}
+}
+
 #[cfg(test)]
 mod tests {
 	use crate::vec3::Vec3;
@@ -165,6 +173,15 @@ mod tests {
 		let res = vec / 3.;
 
 		assert_eq!(res.values, [1., 2., 3.]);
+	}
+
+	#[test]
+	fn neg() {
+		let vec = Vec3::new(3., 6., 9.);
+
+		let res = -vec;
+
+		assert_eq!(res.values, [-3., -6., -9.]);
 	}
 
 	#[test]
