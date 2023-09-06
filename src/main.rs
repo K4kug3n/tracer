@@ -1,32 +1,22 @@
 pub mod vec3;
 pub mod color;
 pub mod ray;
+pub mod hittable;
+pub mod sphere;
+
+use hittable::Hittable;
 
 use crate::color::Color;
 use crate::vec3::{Vec3, Point3};
 use crate::ray::Ray;
-
-fn hit_sphere(center: &Point3, radius: f64, ray: &Ray) -> f64 {
-    let oc = ray.origin() - *center;
-
-    let a = ray.direction().squared_length();
-    let half_b = oc.dot(ray.direction());
-    let c = oc.squared_length() - radius * radius;
-
-    let discriminant = half_b * half_b - a * c;
-    if discriminant < 0. {
-        return -1.
-    }
-
-    (-half_b - f64::sqrt(discriminant)) / a
-}
+use crate::sphere::Sphere;
 
 fn ray_color(ray: &Ray) -> Color {
-    let t = hit_sphere(&Point3::new(0., 0., -1.), 0.5, ray);
-    if t > 0. {
-        let n = (ray.at(t) - Point3::new(0., 0., -1.)).unit();
+    let sphere = Sphere::new(Point3::new(0., 0., -1.), 0.5);
+    let hit = sphere.hit(ray, 0., 1.);
 
-        return 0.5 * Color::new(n.x() + 1., n.y() + 1., n.z() + 1.);
+    if let Some(record) = hit {
+        return 0.5 * Color::new(record.normal.x() + 1., record.normal.y() + 1., record.normal.z() + 1.);
     }
 
     let unit_direction = ray.direction().unit();
