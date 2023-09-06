@@ -3,20 +3,18 @@ pub mod color;
 pub mod ray;
 pub mod hittable;
 pub mod sphere;
+pub mod hittable_list;
 
-use hittable::Hittable;
-
+use crate::hittable::Hittable;
 use crate::color::Color;
 use crate::vec3::{Vec3, Point3};
 use crate::ray::Ray;
+use crate::hittable_list::HittableList;
 use crate::sphere::Sphere;
 
-fn ray_color(ray: &Ray) -> Color {
-    let sphere = Sphere::new(Point3::new(0., 0., -1.), 0.5);
-    let hit = sphere.hit(ray, 0., 1.);
-
-    if let Some(record) = hit {
-        return 0.5 * Color::new(record.normal.x() + 1., record.normal.y() + 1., record.normal.z() + 1.);
+fn ray_color(ray: &Ray, world: &dyn Hittable) -> Color {
+    if let Some(record) = world.hit(ray, 0., f64::MAX) {
+        return 0.5 * (record.normal + Color::new(1., 1., 1.));
     }
 
     let unit_direction = ray.direction().unit();
@@ -30,6 +28,10 @@ fn main() {
     let aspect_ratio = 16. / 9.;
     let image_width = 400;
     let image_height = f64::max(f64::from(image_width) / aspect_ratio, 1.) as i32;
+
+    let mut world = HittableList::new();
+    world.push(Box::new(Sphere::new(Vec3::new(0., 0., -1.), 0.5)));
+    world.push(Box::new(Sphere::new(Vec3::new(0., -100.5, -1.), 100.)));
 
     let focal_length = 1.;
     let viewport_height = 2.;
@@ -57,7 +59,7 @@ fn main() {
 
             let ray = Ray::new(camera_center, ray_direction);
 
-            let pixel_color = ray_color(&ray);
+            let pixel_color = ray_color(&ray, &world);
             pixel_color.write();
         }
     }
