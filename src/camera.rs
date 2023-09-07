@@ -3,8 +3,10 @@ use crate::hittable::Hittable;
 use crate::color::Color;
 use crate::interval::Interval;
 use crate::vec3::{Point3, Vec3};
+use rand::Rng;
 
 pub struct Camera {
+	pub samples_per_pixel: i8,
 	pub image_width: i32,
 	pub aspect_ratio: f64,
 	image_height: i32,
@@ -17,6 +19,7 @@ pub struct Camera {
 impl Camera {
 	pub fn new() -> Camera {
 		Camera {
+			samples_per_pixel: 10,
 			image_width: 100,
 			aspect_ratio: 1.,
 			image_height: 100,
@@ -37,13 +40,14 @@ impl Camera {
     	for j in 0..self.image_height {
     	    eprint!("\rScanlines remaining: {} ", self.image_height - j);
     	    for i in 0..self.image_width {
-    	        let pixel_center = self.pixel00_loc + (self.pixel_delta_v * f64::from(j)) + (self.pixel_delta_u * f64::from(i));
-    	        let ray_direction = pixel_center - self.center;
+    	        
+    	        let mut pixel_color = Color::new(0., 0., 0.);
+				for _ in 0..self.samples_per_pixel {
+					let ray = self.get_ray(i, j);
+					pixel_color += Camera::ray_color(&ray, world);
+				}
 
-    	        let ray = Ray::new(self.center, ray_direction);
-
-    	        let pixel_color = Camera::ray_color(&ray, world);
-    	        pixel_color.write();
+    	        pixel_color.write(self.samples_per_pixel);
     	    }
     	}
 
@@ -77,5 +81,22 @@ impl Camera {
 		let a = 0.5 * (unit_direction.y() + 1.);
 	
 		(1. - a) * Color::new(1., 1., 1.) + a * Color::new(0.5, 0.7, 1.)
+	}
+
+	fn get_ray(&self, i: i32, j: i32) -> Ray {
+		let pixel_center = self.pixel00_loc + (self.pixel_delta_v * f64::from(j)) + (self.pixel_delta_u * f64::from(i));
+		let pixel_sample = pixel_center + self.pixel_sample_square();
+
+		let ray_direction = pixel_sample - self.center;
+
+    	Ray::new(self.center, ray_direction)
+	}
+
+	fn pixel_sample_square(&self) -> Vec3 {
+		let mut rng = rand::thread_rng();
+		let px = -0.5 + rng.gen::<f64>();
+		let py = -0.5 + rng.gen::<f64>();
+
+		px * self.pixel_delta_u + py * self.pixel_delta_v
 	}
 }
