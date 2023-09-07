@@ -1,4 +1,5 @@
 use std::ops::{Add, AddAssign, Sub, SubAssign, Mul, Div, Neg};
+use rand::Rng;
 
 #[derive(Clone, Copy, Debug)]
 pub struct Vec3 {
@@ -12,6 +13,40 @@ impl Vec3 {
 		Vec3 {
 			values: [v1, v2, v3]
 		}
+	}
+
+	pub fn random() -> Vec3 {
+		let mut rng = rand::thread_rng();
+
+		Vec3::new(rng.gen(), rng.gen(), rng.gen())
+	}
+
+	pub fn borned_random(min: f64, max: f64) -> Vec3 {
+		let mut rng = rand::thread_rng();
+
+		Vec3::new(rng.gen_range(min..max), rng.gen_range(min..max), rng.gen_range(min..max))
+	}
+
+	pub fn random_in_unit_sphere() -> Vec3 {
+		loop {
+			let vec = Vec3::borned_random(-1., 1.);
+			if vec.squared_length() < 1. {
+				return vec;
+			}
+		}
+	}
+
+	pub fn random_unit() -> Vec3 {
+		Vec3::random_in_unit_sphere().unit()
+	}
+
+	pub fn random_on_hemisphere(normal: &Vec3) -> Vec3 {
+		let on_unit_sphere = Vec3::random_unit();
+		if normal.dot(on_unit_sphere) < 0. {
+			return -on_unit_sphere;
+		}
+
+		on_unit_sphere
 	}
 
 	pub fn x(&self) -> f64 {
