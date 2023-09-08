@@ -4,7 +4,6 @@ use crate::hit_record::HitRecord;
 use crate::color::Color;
 use crate::vec3::Vec3;
 
-#[derive(Clone, Copy, Debug)]
 pub struct Lambertian {
 	albedo: Color
 }
