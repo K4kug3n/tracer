@@ -90,6 +90,10 @@ impl Vec3 {
 
 		(f64::abs(self.x()) < eps) && (f64::abs(self.y()) < eps) && (f64::abs(self.z()) < eps)
 	}
+
+	pub fn reflect(&self, normal: &Vec3) -> Vec3 {
+		*self - 2. * self.dot(*normal) * *normal
+	}
 }
 
 impl Add for Vec3 {
