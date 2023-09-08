@@ -3,11 +3,14 @@ use crate::hittable::Hittable;
 use crate::color::Color;
 use crate::interval::Interval;
 use crate::vec3::{Point3, Vec3};
+
 use rand::Rng;
+use std::f64;
 
 pub struct Camera {
 	pub samples_per_pixel: i8,
 	pub max_depth: i8,
+	pub fov: f64,
 	pub image_width: i32,
 	pub aspect_ratio: f64,
 	image_height: i32,
@@ -22,6 +25,7 @@ impl Camera {
 		Camera {
 			samples_per_pixel: 10,
 			max_depth: 10,
+			fov: 90.,
 			image_width: 100,
 			aspect_ratio: 1.,
 			image_height: 100,
@@ -60,7 +64,9 @@ impl Camera {
 		self.image_height = f64::max(f64::from(self.image_width) / self.aspect_ratio, 1.) as i32;
 
 		let focal_length = 1.;
-    	let viewport_height = 2.;
+		let theta = self.fov * 180. / f64::consts::PI;
+		let h = f64::tan(theta / 2.);
+    	let viewport_height = 2. * h * focal_length;
     	let viewport_width = viewport_height * (f64::from(self.image_width) / f64::from(self.image_height));
     	let camera_center = Point3::new(0., 0., 0.);
 
