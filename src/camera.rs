@@ -80,9 +80,11 @@ impl Camera {
 		}
 
 		if let Some(record) = world.hit(ray, &Interval { min: 0.001, max: f64::MAX }) {
-			let (scatter, attenuation) = record.material.scatter(ray, &record);
+			if let Some((scatter, attenuation)) = record.material.scatter(ray, &record) {
+				return attenuation * Camera::ray_color(&scatter, depth - 1, world);
+			}
 
-			return attenuation * Camera::ray_color(&scatter, depth - 1, world);
+			return Color::new(0., 0., 0.);
 		}
 	
 		let unit_direction = ray.direction().unit();

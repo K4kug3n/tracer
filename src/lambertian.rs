@@ -10,13 +10,13 @@ pub struct Lambertian {
 }
 
 impl Material for Lambertian {
-	fn scatter(&self, _: &Ray, rec: &HitRecord) -> (Ray, Color) {
+	fn scatter(&self, _: &Ray, rec: &HitRecord) -> Option<(Ray, Color)> {
 		let mut direction = rec.normal + Vec3::random_unit();
 		if direction.near_zero() {
 			direction = rec.normal;
 		}
 
-		(Ray::new(rec.point, direction), self.albedo)
+		Some((Ray::new(rec.point, direction), self.albedo))
 	}
 }
 
