@@ -6,6 +6,8 @@ pub mod sphere;
 pub mod hittable_list;
 pub mod interval;
 pub mod camera;
+pub mod hit_record;
+pub mod material;
 
 use crate::vec3::Vec3;
 use crate::hittable_list::HittableList;
@@ -16,8 +18,8 @@ use crate::camera::Camera;
 
 fn main() {
     let mut world = HittableList::new();
-    world.push(Box::new(Sphere::new(Vec3::new(0., 0., -1.), 0.5)));
-    world.push(Box::new(Sphere::new(Vec3::new(0., -100.5, -1.), 100.)));
+    //world.push(Box::new(Sphere::new(Vec3::new(0., 0., -1.), 0.5)));
+   // world.push(Box::new(Sphere::new(Vec3::new(0., -100.5, -1.), 100.)));
 
     let mut camera = Camera::new();
 
