@@ -84,6 +84,12 @@ impl Vec3 {
 	pub fn unit(&self) -> Vec3 {
 		*self / self.length()
 	}
+
+	pub fn near_zero(&self) -> bool {
+		let eps = 1e-8;
+
+		(f64::abs(self.x()) < eps) && (f64::abs(self.y()) < eps) && (f64::abs(self.z()) < eps)
+	}
 }
 
 impl Add for Vec3 {
@@ -127,6 +133,14 @@ impl Mul<Vec3> for f64 {
 
 	fn mul(self, vec: Vec3) -> Self::Output {
 		vec * self
+	}
+}
+
+impl Mul for Vec3 {
+	type Output = Vec3;
+	
+	fn mul(self, rhs: Self) -> Self::Output {
+		Vec3::new(self.x() * rhs.x(), self.y() * rhs.y(), self.z() * rhs.z())
 	}
 }
 
@@ -194,11 +208,13 @@ mod tests {
 	fn mul() {
 		let vec = Vec3::new(1., 2., 3.);
 
-		let res1 = vec * 3.;
-		let res2 = 3. * vec;
+		let res_1 = vec * 3.;
+		let res_2 = 3. * vec;
+		let res_3 = vec * vec;
 
-		assert_eq!(res1.values, [3., 6., 9.]);
-		assert_eq!(res2.values, [3., 6., 9.]);
+		assert_eq!(res_1.values, [3., 6., 9.]);
+		assert_eq!(res_2.values, [3., 6., 9.]);
+		assert_eq!(res_3.values, [1., 4., 9.]);
 	}
 
 	#[test]

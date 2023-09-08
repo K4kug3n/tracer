@@ -80,9 +80,9 @@ impl Camera {
 		}
 
 		if let Some(record) = world.hit(ray, &Interval { min: 0.001, max: f64::MAX }) {
-			let direction = record.normal + Vec3::random_unit();
+			let (scatter, attenuation) = record.material.scatter(ray, &record);
 
-			return 0.5 * Camera::ray_color(&Ray::new(record.point, direction), depth - 1, world);
+			return attenuation * Camera::ray_color(&scatter, depth - 1, world);
 		}
 	
 		let unit_direction = ray.direction().unit();
