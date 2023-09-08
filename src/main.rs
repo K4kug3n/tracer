@@ -22,8 +22,8 @@ use crate::color::Color;
 fn main() {
     let mat_ground = Box::new(Lambertian::new(Color::new(0.8, 0.8, 0.)));
     let mat_center = Box::new(Lambertian::new(Color::new(0.7, 0.3, 0.3)));
-    let mat_left = Box::new(Metal::new(Color::new(0.8, 0.8, 0.8)));
-    let mat_right = Box::new(Metal::new(Color::new(0.8, 0.6, 0.2)));
+    let mat_left = Box::new(Metal::new(Color::new(0.8, 0.8, 0.8), 0.3));
+    let mat_right = Box::new(Metal::new(Color::new(0.8, 0.6, 0.2), 1.));
 
     let mut world = HittableList::new();
     world.push(Box::new(Sphere::new(Vec3::new(0., -100.5, -1.), 100., mat_ground)));
