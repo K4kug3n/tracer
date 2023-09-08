@@ -15,6 +15,10 @@ impl Color {
             g *= scale;
             b *= scale;
 
+            r = Color::linear_to_gamma(r);
+            g = Color::linear_to_gamma(g);
+            b = Color::linear_to_gamma(b);
+
             let interval = Interval{ min: 0., max: 0.99 }; 
             let ir = (255.99 * interval.clamp(r)) as i64;
             let ig = (255.99 * interval.clamp(g)) as i64;
@@ -22,4 +26,8 @@ impl Color {
 
             println!("{} {} {}", ir, ig, ib);
 	}
+
+    fn linear_to_gamma(linear_compoment: f64) -> f64 {
+        f64::sqrt(linear_compoment)
+    }
 }

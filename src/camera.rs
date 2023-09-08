@@ -80,7 +80,7 @@ impl Camera {
 		}
 
 		if let Some(record) = world.hit(ray, &Interval { min: 0.001, max: f64::MAX }) {
-			let direction = Vec3::random_on_hemisphere(&record.normal);
+			let direction = record.normal + Vec3::random_unit();
 
 			return 0.5 * Camera::ray_color(&Ray::new(record.point, direction), depth - 1, world);
 		}
