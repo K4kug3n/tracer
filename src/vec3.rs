@@ -94,6 +94,14 @@ impl Vec3 {
 	pub fn reflect(&self, normal: &Vec3) -> Vec3 {
 		*self - 2. * self.dot(*normal) * *normal
 	}
+
+	pub fn refract(&self, normal: &Vec3, coeff: f64) -> Vec3 {
+		let cos_theta = f64::min((-*self).dot(*normal), 1.);
+		let r_perp = coeff * (*self + cos_theta * *normal);
+		let r_parallel = -f64::sqrt(f64::abs(1. - r_perp.squared_length())) * *normal;
+
+		r_perp + r_parallel
+	}
 }
 
 impl Add for Vec3 {
