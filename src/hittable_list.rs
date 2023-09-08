@@ -1,6 +1,7 @@
 use std::vec::Vec;
 
-use crate::hittable::{Hittable, HitRecord};
+use crate::hittable::Hittable;
+use crate::hit_record::HitRecord;
 use crate::interval::Interval;
 
 pub struct HittableList {
