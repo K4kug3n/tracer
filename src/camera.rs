@@ -13,11 +13,17 @@ pub struct Camera {
 	pub fov: f64,
 	pub image_width: i32,
 	pub aspect_ratio: f64,
+	pub lookfrom: Point3,
+	pub lookat: Point3,
+	pub up: Vec3,
 	image_height: i32,
 	center: Point3,
 	pixel00_loc: Point3,
 	pixel_delta_u: Vec3,
-	pixel_delta_v: Vec3
+	pixel_delta_v: Vec3,
+	u: Vec3,
+	v: Vec3,
+	w: Vec3
 }
 
 impl Camera {
@@ -28,11 +34,17 @@ impl Camera {
 			fov: 90.,
 			image_width: 100,
 			aspect_ratio: 1.,
+			lookfrom: Point3::new(0., 0., -1.),
+			lookat: Point3::new(0., 0., 0.),
+			up: Vec3::new(0., 1., 0.),
 			image_height: 100,
 			center: Vec3::new(0., 0., 0.),
 			pixel00_loc: Point3::new(-1., 1., -1.),
 			pixel_delta_u: Vec3::new(0.02, 0., 0.),
-			pixel_delta_v: Vec3::new(0., -0.02, 0.)
+			pixel_delta_v: Vec3::new(0., -0.02, 0.),
+			u: Vec3::new(0., 0., 0.),
+			v: Vec3::new(0., 0., 0.),
+			w: Vec3::new(0., 0., 0.)
 		}
 	}
 
@@ -63,20 +75,24 @@ impl Camera {
 	fn initialise(&mut self) {
 		self.image_height = f64::max(f64::from(self.image_width) / self.aspect_ratio, 1.) as i32;
 
-		let focal_length = 1.;
-		let theta = self.fov * 180. / f64::consts::PI;
+		let focal_length = (self.lookfrom - self.lookat).length();
+		let theta = self.fov * f64::consts::PI / 180.;
 		let h = f64::tan(theta / 2.);
     	let viewport_height = 2. * h * focal_length;
     	let viewport_width = viewport_height * (f64::from(self.image_width) / f64::from(self.image_height));
-    	let camera_center = Point3::new(0., 0., 0.);
+    	self.center = self.lookfrom;
 
-    	let viewport_u = Vec3::new(viewport_width, 0., 0.);
-    	let viewport_v = Vec3::new(0., -viewport_height, 0.);
+		self.w = (self.lookfrom - self.lookat).unit();
+		self.u = (self.up.cross(self.w)).unit();
+		self.v = self.w.cross(self.u);
+
+    	let viewport_u = viewport_width * self.u;
+    	let viewport_v = viewport_height * -self.v;
 
     	self.pixel_delta_u = viewport_u / f64::from(self.image_width);
     	self.pixel_delta_v = viewport_v / f64::from(self.image_height);
 
-    	let viewport_upper_left = camera_center - viewport_u / 2. - viewport_v / 2. - Vec3::new(0., 0., focal_length);
+    	let viewport_upper_left = self.center - (viewport_u / 2.) - (viewport_v / 2.) - (focal_length * self.w);
     	self.pixel00_loc = viewport_upper_left + 0.5 * (self.pixel_delta_u + self.pixel_delta_v);
 	}
 

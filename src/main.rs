@@ -12,7 +12,7 @@ pub mod lambertian;
 pub mod metal;
 pub mod dielectric;
 
-use crate::vec3::Vec3;
+use crate::vec3::{Vec3, Point3};
 use crate::hittable_list::HittableList;
 use crate::sphere::Sphere;
 use crate::camera::Camera;
@@ -31,6 +31,7 @@ fn main() {
     world.push(Box::new(Sphere::new(Vec3::new(0., -100.5, -1.), 100., mat_ground)));
     world.push(Box::new(Sphere::new(Vec3::new(0., 0., -1.), 0.5, mat_center)));
     world.push(Box::new(Sphere::new(Vec3::new(-1., 0., -1.), 0.5, mat_left)));
+    world.push(Box::new(Sphere::new(Vec3::new(-1., 0., -1.), -0.4, Box::new(Dielectric::new(1.5)))));
     world.push(Box::new(Sphere::new(Vec3::new(1., 0., -1.), 0.5, mat_right)));
 
     let mut camera = Camera::new();
@@ -38,6 +39,11 @@ fn main() {
     camera.aspect_ratio = 16. / 9.;
     camera.image_width = 400;
     camera.samples_per_pixel = 100;
+
+    camera.fov = 90.;
+    camera.lookfrom = Point3::new(-2., 2., 1.);
+    camera.lookat = Point3::new(0., 0., -1.);
+    camera.up = Vec3::new(0., 1., 0.);
 
     camera.render(&world);
 }
