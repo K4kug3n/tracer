@@ -36,6 +36,16 @@ impl Vec3 {
 		}
 	}
 
+	pub fn random_in_unit_disk() -> Vec3 {
+		let mut rng = rand::thread_rng();
+		loop {
+			let vec = Vec3::new(rng.gen(), rng.gen(), 0.);
+			if vec.squared_length() < 1. {
+				return vec;
+			}
+		}
+	}
+
 	pub fn random_unit() -> Vec3 {
 		Vec3::random_in_unit_sphere().unit()
 	}
