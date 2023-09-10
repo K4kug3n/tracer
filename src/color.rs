@@ -4,7 +4,7 @@ use crate::interval::Interval;
 pub type Color = Vec3;
 
 impl Color {
-	pub fn write(&self, samples_per_pixel: i8) {
+	pub fn write(&self, samples_per_pixel: i16) {
             let scale = 1. / f64::from(samples_per_pixel);
 
             let mut r = self.x();
