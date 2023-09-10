@@ -8,7 +8,7 @@ use rand::Rng;
 use std::f64;
 
 pub struct Camera {
-	pub samples_per_pixel: i8,
+	pub samples_per_pixel: i16,
 	pub max_depth: i8,
 	pub fov: f64,
 	pub image_width: i32,
